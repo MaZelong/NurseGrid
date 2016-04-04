@@ -21,8 +21,8 @@ export default class App extends React.Component {
           title={<span> NurseGrid </span>}
         />
         <div className="row-fluid">
-          <div className="col-xs-12 col-sm-6 col-lg-8">           
-            <Search history={this.props.history}/>
+          <div>           
+            <Search history={this.props.history} />
           </div>                
         </div>
         <div className="row-fluid">

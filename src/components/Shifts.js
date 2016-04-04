@@ -16,28 +16,64 @@ export default class Shifts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: props.userName,
-      userId: props.userId,
-      worksites: props.worksites,
-      shifts: props.shifts
+      shifts: []
     }
   }
   componentDidMount() {
-    this.init(this.props);
+    this.init(this.props.params.userId);
   }
 
   componentWillReceiveProps(nextProps) {
 
-    this.init(nextProps);
+    this.init(nextProps.params.userId);
   }
 
-  init(props) { 
-    this.setState({
-      userName: props.userName,
-      userId: props.userId,
-      worksites: props.worksites,
-      shifts: props.shifts
-    });
+  init(userId) { 
+    let that = this;
+    $.ajax({
+         url: `https://app-stage.nursegrid.com/users/${userId}?clientToken=2d3a4b997a757ce8ac488ef74a2711`,
+         method: 'PUT',
+         crossDomain: true,
+         dataType: 'jsonp'
+       })
+       .done((data) => {
+         that.setState({
+           userName: data.result.displayName,
+           userId: data.result.userId,
+           worksites: data.result.worksites
+         });
+
+         for (var i=0;i<data.result.shifts.length-1; i++) {
+           let curr = moment(data.result.shifts[i].start);
+           let next = moment(data.result.shifts[i+1].start);
+           if (next.dayOfYear() - curr.dayOfYear() > 1) {
+             let newDate = {
+               "shiftId": -1 - curr.format('X'),
+               "shiftTypeId": -1,
+               "userId": 124261,
+               "worksiteId": -1,
+               "hospitalId": -1,
+               "hospitalName": null,
+               "departmentId": -1,
+               "start": curr.add(1, 'days').format('YYYY MM DD'),
+               "end": '',
+               "timeZone": null,
+               "swapStatusId": null,
+               "isCharge": null,
+               "isFlexOff": null,
+               "isOvertime": null,
+               "acceptedUnownedSwapGroupId": null,
+               "pendingUnownedSwapGroupId": null,
+               "notes": null,
+               "granted": null
+             }
+             data.result.shifts.splice(i+1, 0, newDate);
+           }
+         }
+         this.setState({
+           shifts: data.result.shifts
+         });
+       });
   }
 
   render() {
@@ -46,7 +82,6 @@ export default class Shifts extends React.Component {
         <CardTitle title={"Welcome"} />
         <List>
           {this.state.shifts.map(function(shift, i) {
-            let boundClick = this.handleClick.bind(this, i);
             let shiftWorkSiteId = shift.worksiteId;
             let workSite;
             if (shift.worksiteId === -1) {
@@ -75,6 +110,7 @@ export default class Shifts extends React.Component {
                 return worksite.worksiteId === shift.worksiteId && worksite.hospitalId === shift.hospitalId;
               })[0];
             }
+            let boundClick = this.handleClick.bind(this, i, shift, workSite);
             return (
               <Card key={i}>
                 <CardTitle subtitleStyle={{color:'#'+workSite.colorHex}} title={moment(shift.start).format("MMM-Do")} subtitle={workSite.hospitalName} />
@@ -91,10 +127,8 @@ export default class Shifts extends React.Component {
     )
   }
 
-  handleClick(index, item) {
-    console.log("kdalijfdowijeowiqo");
-    console.log(this.context);
-    //this.props.history.pushState(null, "/" + this.state.userId + "/shifts/" + this.state.shifts[index].shiftId);
+  handleClick(index, item, site) {
+    this.props.history.pushState({shift: item, workSite: site}, "/" + this.state.userId + "/shifts/" + this.state.shifts[index].shiftId);
   }
 
 

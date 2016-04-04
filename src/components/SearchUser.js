@@ -1,7 +1,6 @@
 import React from 'react';
 import Router from 'react-router';
 import TextField from 'material-ui/lib/text-field';
-import FlatButton from 'material-ui/lib/flat-button';
 import Card from 'material-ui/lib/card/card';
 
 class SearchUser extends React.Component {
