@@ -2,6 +2,7 @@ import React from 'react';
 import Router from 'react-router';
 import TextField from 'material-ui/lib/text-field';
 import FlatButton from 'material-ui/lib/flat-button';
+import Card from 'material-ui/lib/card/card';
 
 class SearchUser extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class SearchUser extends React.Component {
   render() {
     let that = this;
     return (
-      <div >
+      <div>
         <TextField type="text" hintText="Input User Id" value={that.state.text} onChange={this.handleChange.bind(this)} onEnterKeyDown={this.handleSubmit.bind(this)}/>
       </div>
     )

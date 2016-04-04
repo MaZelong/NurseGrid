@@ -6,23 +6,26 @@ import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import MyRawTheme from '../css/materialThemeCustomizations';
 import Search from './SearchUser';
+import Card from 'material-ui/lib/card/card';
+import CardTitle from 'material-ui/lib/card/card-title';
+import CardText from 'material-ui/lib/card/card-text';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
   }
-
   render() {
     return (
-      <div>
+      <div className="container-fluid">
         <AppBar
           title={<span> NurseGrid </span>}
         />
-        <div class="col-md-6">           
-          <Search history={this.props.history}/>
+        <div className="row-fluid">
+          <div className="col-xs-12 col-sm-6 col-lg-8">           
+            <Search history={this.props.history}/>
+          </div>                
         </div>
-        <hr />
-        <div>
+        <div className="row-fluid">
           {this.props.children}
         </div>
       </div>

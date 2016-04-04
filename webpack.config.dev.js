@@ -27,6 +27,12 @@ module.exports = {
         loaders: ["style", "css", "sass"]
       },
       {
+        test: /\.scss$/,
+        loaders: ['style', 'css?foo=bar', 'sass?config&anotherConfig'],
+        include: path.resolve(__dirname, './node_modules'),
+        exclude: path.resolve(__dirname, './node_modules/react-flexbox-grid'),
+      },
+      {
         test: /\.svg$/,
         loader: 'svg-inline'
       }]

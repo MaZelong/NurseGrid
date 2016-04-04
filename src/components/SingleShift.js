@@ -3,6 +3,8 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import Avatar from 'material-ui/lib/avatar';
 import styles from 'material-ui/lib/styles';
 import InlineSVG from 'svg-inline-react';
+import Divider from 'material-ui/lib/divider';
+import Face from 'material-ui/lib/svg-icons/image/tag-faces';
 import moment from 'moment';
 
 const colors = styles.Colors;
@@ -17,14 +19,20 @@ export default class UserProfile extends React.Component {
       startTime: props.shift.start,
       endTime: props.shift.end,
       timeZone: props.shift.timeZone,
-      shiftTypeId: props.shift.shiftTypeId
+      shiftTypeId: props.shift.shiftTypeId,
+      color: '#' + props.workSite.colorHex,
+      dayOff: props.shift.shiftId < 0
     }
   }
 
   componentDidMount() {
-    this.handleTime();
-    this.handleShiftType();
-    this.handleShiftIcon();
+    if (this.state.dayOff) {
+
+    } else {
+      this.handleTime();
+      this.handleShiftType();
+      this.handleShiftIcon();
+    }
   }
 
   handleTime() {
@@ -60,7 +68,7 @@ export default class UserProfile extends React.Component {
     if (moment(this.state.startTime).hour() >= 12 && moment(this.state.startTime).hour() < 17) {
       src = require('../icons/SwingShift.svg');
     }
-    if (moment(this.state.startTime).hour() >= 17) {
+    if (moment(this.state.startTime).hour() >= 17 || moment(this.state.startTime).hour() < 6) {
       src = require('../icons/NightShift.svg');
     }
     this.setState({
@@ -69,33 +77,58 @@ export default class UserProfile extends React.Component {
   }
 
 	render() {
-		return (
-			<ListItem
-        leftAvatar={
-          <Avatar
-          icon = {<InlineSVG 
-            src={this.state.iconSrc}
-          />}
-          backgroundColor={colors.transparent}
-          />
-        }
-        onClick={this.props.onClick}
-        primaryText={
-          <p>
-            <span style={{color: colors.blue500}}>{this.state.startDate}</span><br/>
-            <span>{this.state.start} To {this.state.end}</span>
-          </p>
-        }
-        secondaryText={
-          <p>
-            <span style={{color: colors.grey500}}>{this.state.shiftType}</span><br/>
-            {this.props.workSite.hospitalName}
-            {this.props.workSite.departmentName}
-          </p>
-        }
-      > 
-      </ListItem>
-		)
+    if (!this.state.dayOff) {
+  		return (
+  			<ListItem
+          leftAvatar={
+            <Avatar
+            icon = {<InlineSVG 
+              src={this.state.iconSrc}
+            />}
+            backgroundColor={colors.transparent}
+            />
+          }
+          onClick={this.props.onClick}
+          primaryText={
+            <p>
+              <span style={{color: colors.cyan500}}>{this.state.start} To {this.state.end}</span><br/>
+              <span style={{color: colors.cyan500}}>{this.state.shiftType}</span>
+            </p>
+          }
+          secondaryText={
+            <p style={{color:this.state.color}}>
+              <span>{this.props.workSite.departmentName}</span><br/>
+            </p>
+          }
+          secondaryTextLines={2}
+        > 
+        </ListItem>
+  		)
+    } else {
+      return (
+        <ListItem
+          leftAvatar={
+           <Avatar
+           icon = {<Face />}
+           color={colors.deepOrange500}
+           backgroundColor={colors.transparent}
+           />
+          }
+          onClick={this.props.onClick}
+          primaryText={
+           <p>
+             <span style={{color: colors.deepOrange500}}>You have a dayoff</span><br/>
+           </p>
+          }
+          secondaryText={
+           <p style={{color:this.state.color}}>
+             <span>Enjoy Your Day</span><br/>
+           </p>
+          }
+          secondaryTextLines={2}> 
+        </ListItem> 
+      )
+    }
 	}
 
 }
